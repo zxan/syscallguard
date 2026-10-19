@@ -1,0 +1,9 @@
+# Solo VM policy: paths are the VM's virtiofs mount of the solo worktree (docs/solo-notes.md).
+mode = "audit"
+protect = [
+  "/home/inno/syscallguard-solo/demo/project/.env",
+]
+allow = [
+  "127.0.0.0/8",
+  "::1/128",
+]

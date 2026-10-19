@@ -65,3 +65,15 @@ Log solo work here only — never in docs/shared.md or the per-person files.
 ### 2026-10-20 
 - Synced hooks D and E from main in dfc0d3f, along with the Contract 2 clarifications. 
 - The 19 Oct entry saying D and E are only on track/kernel is superseded.
+- guard/guard.py implemented. Timestamps: hooks A, D and E all use bpf_ktime_get_ns
+  (CLOCK_MONOTONIC), so boot_time_epoch = CLOCK_REALTIME - CLOCK_MONOTONIC, sampled once at
+  startup. If a hook ever switches to bpf_ktime_get_boot_ns, switch to CLOCK_BOOTTIME too.
+- Probes are attached by bcc's autoload on BPF() (lsm__file_open,
+  raw_tracepoint__sched_process_fork, tracepoint__sched__sched_process_exit); calling
+  attach again would raise. guard.py checks all three landed and treats a miss as a load
+  failure (ERROR, exit 3). Add hooks B and C to REQUIRED_PROBES when they sync from main.
+- Map fill failures (e.g. more protect paths than protected_inodes holds) count as a BPF
+  load failure: ERROR, exit 3. Policy still doesn't cap list lengths.
+- Decided here: if stdout breaks (bridge died), guard.py logs once to stderr, stops emitting
+  and keeps running, so the kernel hooks stay attached. Restart the whole pipeline as usual.
+- Solo VM policy: demo/solo-policy.toml (committed; paths are the VM virtiofs mount).
