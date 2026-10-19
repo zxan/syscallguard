@@ -167,6 +167,10 @@ allow = [
 
 Parsing (`guard/policy.py`): use `tomllib`. Validate that `mode` ∈ {audit, enforce}; that every `protect` path is absolute and exists (`os.stat`, which follows symlinks, so we protect the real file); and that every `allow` entry parses with `ipaddress.ip_network(strict=False)`. On any error, print a clear message to stderr and exit 2. A CLI `--mode` flag overrides the file. A missing `mode` means `audit`. `protect` must be non-empty; `allow` may be empty (a tagged process then reaches nothing, useful for testing). Unknown keys are rejected. Map-size limits are not checked.
 
+A missing allow key is treated as empty (most restrictive reading).
+A missing protect key is rejected, same as an empty one.
+allow entries must be strings. Non-string entries are rejected — an integer like 5 would otherwise silently become 0.0.0.5/32.
+
 ## Contract 3: Guard CLI and JSON event schema (stdout of `guard.py`)
 
 ```
