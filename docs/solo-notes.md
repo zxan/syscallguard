@@ -44,3 +44,19 @@ Log solo work here only — never in docs/shared.md or the per-person files.
   a missing `protect` key is rejected like an empty one.
 - tests/test_policy.py uses unittest (the repo's tooling per AGENTS.md); pytest is not installed
   on the host. Static fixtures for invalid files live in tests/fixtures/policy/.
+
+### 2026-10-20
+- guard/events.py implemented (Contracts 1 and 3) with tests/test_events.py (unittest).
+  struct sg_event is 72 bytes: gcc on sg_common.h gives offsetof comm = 52, sizeof = 72
+  (4 bytes tail padding). ctypes mirror and struct format `@QQIIIIHH16s16s0Q` both agree.
+- `ts` is float Unix epoch seconds as Contract 3 says (boot_time_epoch + ts_ns / 1e9),
+  unrounded; the contract's example shows milliseconds but sets no precision.
+- Decided here, not spelled out in the contracts:
+  - "Malformed" (decode_event returns None) = length != 72, or a type, hook or family code
+    sg_common.h doesn't define. An over-long buffer counts as malformed too.
+  - IPv4-mapped IPv6 reports `family: "ipv4"` as well as the IPv4 `daddr`, so the two
+    fields agree. Hook B/C's check_dest should already normalise these before emitting.
+  - `parent_tgid` is null on everything except TAG_INHERIT (sg_common.h: "TAG_INHERIT only").
+  - `comm` bytes that aren't UTF-8 decode with U+FFFD replacement rather than failing.
+  - READY and ERROR have no kernel type code, so events.ready() and events.error() build
+    them with the same field set; guard.py calls those instead of writing dicts itself.
