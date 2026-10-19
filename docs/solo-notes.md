@@ -127,3 +127,16 @@ sched_process_fork, sched:sched_process_exit). TAG python3 -> ALLOW
 two ::ffff: connects, shown as IPv4, which proves the mapped-address conversion
 -> UNTAG. Nothing emitted for the untagged connect. Not --fake: real kernel,
 real tgids.
+
+### 2026-10-20
+- demo kit part 1: internal_api.py (allowlisted 127.0.0.1 mock), attacker.py (host-side TCP+UDP
+  listener, meant to stay empty), agent.py (simulated agent, refuses to run as root).
+- Honesty: agent.py reports only what it observed. It never asserts a block; the guard's BLOCK
+  event is the only proof. udp and preconnect exercise the sendmsg path (hook C, not merged), so
+  they succeed today and the agent says so plainly rather than calling it a failure.
+- curl mode: curl exit 7 (connection refused) is indistinguishable from a kernel connect block
+  by exit code alone, so the agent says "check the guard's BLOCK event" rather than claiming a
+  block. attacker.py's TCP side now reads with a 1 s timeout then returns a tiny HTTP 200, so a
+  curl that DOES get through exits 0 (clean signal); a blocked connect gives curl exit 7.
+- Baseline verified on the host with no guard: all six modes succeed and the attacker window
+  lights up. That is correct -- it proves the kit works before the kernel is involved.
