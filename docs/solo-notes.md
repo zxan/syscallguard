@@ -34,3 +34,13 @@ Log solo work here only — never in docs/shared.md or the per-person files.
   describes Electron; that section is not one of contracts 1-4, and the renderer already has
   to work in a plain browser via `?bridge=`.)
 - Decision: the VM's solo directory is a virtiofs share of the host worktree, not a clone.
+- guard/policy.py implemented (Contract 2). `load(path, mode=None)` returns a Policy or raises
+  PolicyError; guard.py prints the message to stderr and exits 2. That reads ARCHITECTURE.md:168
+  ("print ... and exit 2") as the guard's observable behaviour, not policy.py's (decided with
+  Azaan). Exit codes belong to guard.py per Contract 3.
+- Inode lookup stays in guard.py: Contract 3 says guard.py fills protected_inodes from st_ino.
+  policy.py only os.stat()s each protect path to prove it exists.
+- Not stated in Contract 2, chosen here: a missing `allow` key means empty (most restrictive);
+  a missing `protect` key is rejected like an empty one.
+- tests/test_policy.py uses unittest (the repo's tooling per AGENTS.md); pytest is not installed
+  on the host. Static fixtures for invalid files live in tests/fixtures/policy/.

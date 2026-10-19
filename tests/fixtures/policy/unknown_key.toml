@@ -1,0 +1,4 @@
+mode = "audit"
+protect = ["/nonexistent/.env"]
+allow = []
+extra = true
