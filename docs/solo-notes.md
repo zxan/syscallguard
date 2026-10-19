@@ -110,3 +110,6 @@ error. A value confirmed on one branch proves nothing about the other.
     between loops instead of keeping python3 tagged forever.
   - stdin is read on a daemon thread, so it works for pipes, files and ttys, and Ctrl-C
     never hangs on a blocked read.
+- guard.py fills config and the allow tries before protected_inodes. check_dest (hook B,
+  track/kernel 02a1fe8) blocks unless mode == AUDIT, so an unset config (mode 0) enforces;
+  filling protect last means nothing is tagged before mode is set.

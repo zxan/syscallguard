@@ -58,9 +58,6 @@ def load_bpf(pol, protect_inos):
             raise RuntimeError(f"probe {key.decode()} did not attach")
     log.debug("attached: %s", ", ".join(k.decode() for _, k in REQUIRED_PROBES))
 
-    prot = b["protected_inodes"]
-    for i, ino in enumerate(protect_inos):   # value = index into the policy's protect list
-        prot[prot.Key(ino)] = prot.Leaf(i)
     for net in pol.allow:
         t = b["allow_v4" if net.version == 4 else "allow_v6"]
         k = t.Key()
@@ -69,6 +66,11 @@ def load_bpf(pol, protect_inos):
         t[k] = t.Leaf(1)
     cfg = b["config"]
     cfg[cfg.Key(0)] = cfg.Leaf(MODE_CODES[pol.mode])
+    # Protect last: check_dest treats an unset config (mode 0) as enforce, so nothing may be
+    # tagged until mode and allowlist are in place.
+    prot = b["protected_inodes"]
+    for i, ino in enumerate(protect_inos):   # value = index into the policy's protect list
+        prot[prot.Key(ino)] = prot.Leaf(i)
     log.debug("maps filled: %d protected, %d allowed, mode=%s", len(protect_inos), len(pol.allow), pol.mode)
     return b
 
