@@ -50,11 +50,13 @@ def _base(ctx, type_, ts):
 
 
 def decode_event(data: bytes, ctx: EventContext) -> dict | None:
-    """Kernel event bytes -> Contract 3 dict. None only if the buffer is malformed: wrong
-    length, or a type/hook/family code sg_common.h doesn't define."""
-    if len(data) != EVENT_SIZE:
+    """Kernel event bytes -> Contract 3 dict. None only if the buffer is malformed: shorter
+    than struct sg_event, or a type/hook/family code sg_common.h doesn't define. A longer
+    buffer decodes its first EVENT_SIZE bytes, so a kernel-side struct change degrades to
+    stale fields instead of every event vanishing."""
+    if len(data) < EVENT_SIZE:
         return None
-    ev = SgEvent.from_buffer_copy(data)
+    ev = SgEvent.from_buffer_copy(data)   # reads the first EVENT_SIZE bytes
     if ev.type not in TYPES or ev.hook not in HOOKS or ev.family not in (0, AF_INET, AF_INET6):
         return None
 

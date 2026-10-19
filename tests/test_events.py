@@ -107,8 +107,9 @@ class TestEvents(unittest.TestCase):
         self.assertIsNone(decode_event(pack(1, 1)[:40], self.ctx))
         self.assertIsNone(decode_event(b"", self.ctx))
 
-    def test_overlong_buffer(self):
-        self.assertIsNone(decode_event(pack(1, 1) + b"\0", self.ctx))
+    def test_overlong_buffer_decodes_prefix(self):
+        buf = pack(1, 1, comm=b"cat")
+        self.assertEqual(self.decode(buf + b"\xff" * 8), self.decode(buf))
 
     def test_garbage_full_length(self):
         # All-0xff: type/hook/family codes sg_common.h doesn't define -> malformed.

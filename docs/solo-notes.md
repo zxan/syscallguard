@@ -52,8 +52,9 @@ Log solo work here only — never in docs/shared.md or the per-person files.
 - `ts` is float Unix epoch seconds as Contract 3 says (boot_time_epoch + ts_ns / 1e9),
   unrounded; the contract's example shows milliseconds but sets no precision.
 - Decided here, not spelled out in the contracts:
-  - "Malformed" (decode_event returns None) = length != 72, or a type, hook or family code
-    sg_common.h doesn't define. An over-long buffer counts as malformed too.
+  - "Malformed" (decode_event returns None) = shorter than 72 bytes, or a type, hook or
+    family code sg_common.h doesn't define. (Changed 2026-10-20: a longer buffer decodes its
+    first 72 bytes and ignores the tail, so a kernel struct change degrades to stale fields.)
   - IPv4-mapped IPv6 reports `family: "ipv4"` as well as the IPv4 `daddr`, so the two
     fields agree. Hook B/C's check_dest should already normalise these before emitting.
   - `parent_tgid` is null on everything except TAG_INHERIT (sg_common.h: "TAG_INHERIT only").
