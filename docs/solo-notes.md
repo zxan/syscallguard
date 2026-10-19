@@ -15,6 +15,22 @@ Log solo work here only — never in docs/shared.md or the per-person files.
   /home/inno/syscallguard-solo/demo/project/.env
 - Default mode audit. Enforce only in the VM.
 
+## Directory map
+- Host /home/zxan/projects/syscallguard: team repo, branch main.
+- Host /home/zxan/projects/syscallguard-solo: this worktree, branch solo.
+- VM /home/inno/syscallguard: a real git clone of the team repo. Git works here. Kernel work only.
+- VM /home/inno/syscallguard-solo: virtiofs mount (tag `solo`) of the host worktree above.
+  Git does not work here and is not meant to: a worktree's `.git` is a file holding an
+  absolute host path, so git fails with "gitfile does not point to a valid repository".
+  Edits happen on the host; the VM only runs code. Do not try to fix this.
+
 ## Log
 ### 2026-10-19
 - Branch and worktree created from main at 2e80714.
+- Kernel synced from main at eaa8d4f (`chore: sync kernel from main`). That brings hook A
+  only: hooks D and E (71d6051) are on track/kernel, not yet on main. Sync again when they land.
+- Decision: the fallback dashboard is a plain-browser Vite static build. Electron is dropped
+  for solo; revisit only after the department round. (ARCHITECTURE.md "Dashboard (Track U)"
+  describes Electron; that section is not one of contracts 1-4, and the renderer already has
+  to work in a plain browser via `?bridge=`.)
+- Decision: the VM's solo directory is a virtiofs share of the host worktree, not a clone.
