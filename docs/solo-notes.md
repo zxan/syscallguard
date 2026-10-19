@@ -140,3 +140,13 @@ real tgids.
   curl that DOES get through exits 0 (clean signal); a blocked connect gives curl exit 7.
 - Baseline verified on the host with no guard: all six modes succeed and the attacker window
   lights up. That is correct -- it proves the kit works before the kernel is involved.
+
+### 2026-10-20 — full stage run passed, real topology. 
+- Guard enforce in VM, agent in VM, attacker on host at 192.168.122.1:9999.
+- Baseline first with guard stopped: attacker received the secrets, which is
+    what makes the blocked run meaningful.
+- --exfil direct: internal API POST succeeded, agent printed BLOCKED by
+    kernel (EPERM), guard emitted BLOCK daddr=192.168.122.1 dport=9999,
+    attacker window stayed silent.
+- --exfil curl: TAG_INHERIT then BLOCK with comm=curl. Attacker silent.
+- Host firewall: libvirt zone 9999/tcp+udp, made --permanent.
