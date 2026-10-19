@@ -25,6 +25,7 @@ MODE_CODES = {"audit": 1, "enforce": 2}   # SG_MODE_* in sg_common.h
 # function itself when it loads the program; we only check they landed, as (bcc table, key).
 REQUIRED_PROBES = (
     ("lsm_fds", b"lsm__file_open"),                      # hook A
+    ("lsm_fds", b"lsm__socket_connect"),                 # hook B
     ("raw_tracepoint_fds", b"sched_process_fork"),       # hook D
     ("tracepoint_fds", b"sched:sched_process_exit"),     # hook E
 )

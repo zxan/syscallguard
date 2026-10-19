@@ -113,3 +113,17 @@ error. A value confirmed on one branch proves nothing about the other.
 - guard.py fills config and the allow tries before protected_inodes. check_dest (hook B,
   track/kernel 02a1fe8) blocks unless mode == AUDIT, so an unset config (mode 0) enforces;
   filling protect last means nothing is tagged before mode is set.
+
+### 2026-10-20 — any test that exercises guard.py runs from
+/home/inno/syscallguard-solo, not /home/inno/syscallguard. The protected inode
+(760558) is the solo copy of demo/project/.env; opening the clone's copy tags
+nothing, every connect takes the untagged fast path and is allowed, and the
+guard looks broken when it is working correctly. Cost 30 minutes once.
+
+### 2026-10-20 — M3 (hook B) acceptance passed through real guard.py in the VM,
+enforce mode. Four probes attached (lsm__file_open, lsm__socket_connect,
+sched_process_fork, sched:sched_process_exit). TAG python3 -> ALLOW
+127.0.0.1:8080 -> BLOCK 192.168.122.174:9999 -> the same ALLOW/BLOCK pair again for the
+two ::ffff: connects, shown as IPv4, which proves the mapped-address conversion
+-> UNTAG. Nothing emitted for the untagged connect. Not --fake: real kernel,
+real tgids.
