@@ -77,3 +77,21 @@ Log solo work here only — never in docs/shared.md or the per-person files.
 - Decided here: if stdout breaks (bridge died), guard.py logs once to stderr, stops emitting
   and keeps running, so the kernel hooks stay attached. Restart the whole pipeline as usual.
 - Solo VM policy: demo/solo-policy.toml (committed; paths are the VM virtiofs mount).
+
+### 2026-10-20 — guard.py acceptance passed in the VM, over the virtiofs mount at
+/home/inno/syscallguard-solo. Verified, not reported:
+  - Inode agreement: stat gave 760558; guard logged "protecting ino=760558";
+    bpftool map dump name protected_inode showed key 760558, value 0.
+  - Sequence: READY (mode=audit, 1 protected, 2 allowed) -> TAG tgid=5614
+    comm=cat -> UNTAG same tgid -> Ctrl-C -> exit=0, and
+    bpftool prog list showed no file_open/sched_process probes left.
+  - Bad policy (empty protect) -> stderr "bad policy: protect must be a
+    non-empty list of absolute paths", exit=2.
+  - The -Wmicrosoft-anon-tag warning at load is expected: it is the
+    -fms-extensions case recorded in docs/shared.md, not a fault.
+
+### 2026-10-20 — device-check fix, verify on BOTH filesystems before trusting it.
+demo/project/.env on solo lives on the virtiofs mount (ino 760558); the team
+clone's copy is on btrfs (handoff records dev=52). i_sb->s_dev vs userspace
+st_dev can disagree on either, and when it does tagging stops silently with no
+error. A value confirmed on one branch proves nothing about the other.
