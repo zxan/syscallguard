@@ -60,3 +60,7 @@ Log solo work here only — never in docs/shared.md or the per-person files.
   - `comm` bytes that aren't UTF-8 decode with U+FFFD replacement rather than failing.
   - READY and ERROR have no kernel type code, so events.ready() and events.error() build
     them with the same field set; guard.py calls those instead of writing dicts itself.
+
+### 2026-10-20 
+- Synced hooks D and E from main in dfc0d3f, along with the Contract 2 clarifications. 
+- The 19 Oct entry saying D and E are only on track/kernel is superseded.
