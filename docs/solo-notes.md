@@ -95,3 +95,18 @@ demo/project/.env on solo lives on the virtiofs mount (ino 760558); the team
 clone's copy is on btrfs (handoff records dev=52). i_sb->s_dev vs userspace
 st_dev can disagree on either, and when it does tagging stops silently with no
 error. A value confirmed on one branch proves nothing about the other.
+- bridge/bridge.py implemented (Contract 4) with tests/test_bridge.py (unittest, no sockets:
+  State, feed() and fake_feed() are tested directly). Event log cap is 50, as Contract 4
+  says ("the last 50 events"), not the 100 fallback.
+- Decided here, not spelled out in Contract 4:
+  - Malformed = not UTF-8, not JSON, not a JSON object, or no string `type`.
+  - Before READY, SNAPSHOT has `protect: []` and `allow: []` alongside `mode: null`.
+  - A repeat TAG (or TAG_INHERIT) for a tagged tgid keeps `since` but refreshes comm,
+    file and parent_tgid from the new event, matching the kernel's upsert.
+  - A tagged entry's comm comes only from TAG/TAG_INHERIT, so an inherited child shows
+    the parent's name (e.g. python3 for curl) until re-tagged. Not refreshed from later
+    ALLOW/BLOCK events.
+  - --fake ends each loop with two UNTAGs (curl, then python3), so the tagged set is empty
+    between loops instead of keeping python3 tagged forever.
+  - stdin is read on a daemon thread, so it works for pipes, files and ttys, and Ctrl-C
+    never hangs on a blocked read.
