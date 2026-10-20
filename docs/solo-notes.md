@@ -155,3 +155,8 @@ real tgids.
 - after a VM reboot the virtiofs share can take a moment; 
 - an empty /home/inno/syscallguard-solo means not-yet-mounted, not lost. 
 - Check with findmnt, remount with sudo mount -t virtiofs solo /home/inno/syscallguard-solo
+
+### 2026-10-21 — full stack verified: 
+- guard | bridge pipeline in VM, dashboard in host browser at the default ws://192.168.122.174:8765. 
+- --exfil direct produced a real BLOCK, banner went red, attacker silent. 
+- Six-window topology documented in the run sheet.
