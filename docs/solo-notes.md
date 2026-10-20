@@ -150,3 +150,8 @@ real tgids.
     attacker window stayed silent.
 - --exfil curl: TAG_INHERIT then BLOCK with comm=curl. Attacker silent.
 - Host firewall: libvirt zone 9999/tcp+udp, made --permanent.
+
+### 2026-10-21 
+- after a VM reboot the virtiofs share can take a moment; 
+- an empty /home/inno/syscallguard-solo means not-yet-mounted, not lost. 
+- Check with findmnt, remount with sudo mount -t virtiofs solo /home/inno/syscallguard-solo
