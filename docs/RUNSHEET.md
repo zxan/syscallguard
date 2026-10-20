@@ -57,6 +57,9 @@ Guard: unknown      → bridge unreachable, W4 not running or not --host 0.0.0.0
 No TAG at all       → wrong directory. Must be syscallguard-solo, NOT syscallguard
 BPF load failure    → exit 3, ERROR event. Kernel locked at 7.2.10-200.fc44, do not update
 Everything dead     → backup video
+Everything dead     →`virsh -c qemu:///system snapshot-revert fed m7-freeze`
+                     `virsh -c qemu:///system start fed`
+                     then W1-W5 from the top. Verified restorable 21 Oct: mount, IP .174, inode 760558 all came back.
 
 ## Never
 - agent as root (bypasses the guard entirely, refuses anyway)

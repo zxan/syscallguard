@@ -160,3 +160,9 @@ real tgids.
 - guard | bridge pipeline in VM, dashboard in host browser at the default ws://192.168.122.174:8765. 
 - --exfil direct produced a real BLOCK, banner went red, attacker silent. 
 - Six-window topology documented in the run sheet.
+
+### 2026-10-21 — M7 freeze. 
+- Three consecutive cold runs passed. VM snapshot
+- "m7-freeze" taken with fed shut off, reverted once and verified: virtiofs
+ -mount, 192.168.122.174, inode 760558, and a real BLOCK on the restored VM.
+ -Backup video recorded.
