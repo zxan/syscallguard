@@ -1,0 +1,100 @@
+/* High contrast, flat colours, no transitions: read from 1.5 m in a noisy hall. */
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --dim: #b0b0b0;
+  --green: #0a6b1e;
+  --amber: #f2b600;
+  --red: #b80000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+main {
+  padding: 16px;
+}
+
+.banner {
+  padding: 24px 32px;
+  border: 4px solid var(--fg);
+}
+.banner.green { background: var(--green); color: #fff; }
+.banner.amber { background: var(--amber); color: #000; }
+.banner.red { background: var(--red); color: #fff; }
+
+.banner-title {
+  font-size: clamp(48px, 8vw, 128px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+.banner-detail {
+  margin-top: 12px;
+  font-size: clamp(20px, 2.6vw, 40px);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin: 16px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.ind {
+  padding: 6px 14px;
+  border: 2px solid var(--fg);
+}
+.ind.ok { background: var(--green); }
+.ind.bad { background: var(--red); }
+.ind.unk { background: #333; }
+.url {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--dim);
+  font-family: ui-monospace, monospace;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  font-size: 22px;
+  color: var(--dim);
+}
+
+.log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: ui-monospace, "DejaVu Sans Mono", monospace;
+  font-size: 20px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 6.5em 9.5em 1fr;
+  gap: 12px;
+  padding: 6px 4px;
+  border-bottom: 1px solid #444;
+}
+.row .time { color: var(--dim); }
+.row .type { font-weight: 800; }
+.row .text { overflow-wrap: anywhere; }
+.t-BLOCK .type,
+.t-ERROR .type { color: #ff6b6b; }
+.t-WOULD_BLOCK .type { color: var(--amber); }
+.t-ALLOW .type { color: #5fd27a; }
+
+@media (max-width: 640px) {
+  .row { grid-template-columns: 1fr; gap: 2px; }
+}
